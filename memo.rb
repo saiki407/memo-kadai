@@ -1,44 +1,44 @@
 require "csv"
-CSV.open('test.csv','w') do |test|
-    
-def make_memo
-    puts "メモのタイトルを入力してください"
-    title = gets.chomp
-    puts "メモの本文を入力してください"
-    content = gets.chomp
-    memo = {"タイトル" => title,"本文"=>content}
+
+puts "1(新規でメモを作成) 2(既存のメモ編集する)"
+
+memo_type = gets.chomp
+
+if memo_type == "1"
+　puts "拡張子を除いたファイル名を入力して下さい"
+
+filename = gets.chomp
+
+　puts "メモの内容を入力してください"
+　puts "終了したい場合はcontrol+Dを入力"
+　
+inputs = $stdin.read.split("\n")
+
+CSV.open("#{filename}.csv", "w") do |csv|
+　csv << inputs
 end
 
-def show_memo(memos)
-    memos.each do |memo|
-        puts memo["タイトル"] + ":" + memo["本文"]
- end
-end
+elsif memo_type == "2"
+　puts "編集するファイル名(拡張子を除く)を入力して下さい"
+ 
+edit_filename = gets.chomp
 
-memos = []
+data_lists = CSV.read("#{edit_filename}.csv")
 
-while true
-    puts "【add】新規でメモを作成"
-    puts "【show】既存のメモを表示する"
-    print "どれか選んでね→"
-    mode = gets.chomp.to_s
-    
-  if mode == "add"
-     puts "新規でメモを作成"
-     memos.push(make_memo)
-  
-  elsif mode == "show"
-      puts "メモを表示します"
-      show_memo(memos)
+　puts "編集するファイルの内容です。"
+　p data_lists
       
-  else
-      puts "エラー"
+　puts "追記するメモ内容を入力して下さい"
+　puts "改行はエンターキー、終了する場合はcontrol + Dを入力して下さい"
       
-  end
-end
-end
+add_inputs = $stdin.read.split("\n")
 
-require "csv"
-CSV.read("test.csv") do  |row|
- p row
- end
+CSV.open("#{edit_filename}.csv", "a") do |csv|
+    csv << add_inputs
+end
+      
+puts "ファイルの内容が以下のように変更されました"
+
+added_data_list = CSV.read("#{edit_filename}.csv")
+p added_data_list
+end
